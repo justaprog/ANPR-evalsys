@@ -47,7 +47,3 @@ https://www.kaggle.com/datasets/unidpro/germany-license-plate-dataset?resource=d
 - FastAPI
 - OpenCV
 - EasyOCR
-- YOLO
-- PostgreSQL
-- Docker
-- pytest
