@@ -7,6 +7,7 @@ class RecognitionResponse(BaseModel):
     filename: str
     content_type: str
     plate_text: str
+    raw_text: str
     confidence: float
     valid_format: bool
     latency_ms: int
