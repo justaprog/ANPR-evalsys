@@ -21,7 +21,7 @@ uv run uvicorn app.main:app --reload
 http://localhost:8000/docs
 ![alt text](data/readme_img/api_docs.png)
 ## Architecture
-Image -> Detection -> Crop -> Preprocessing -> OCR -> Postprocessing -> Result API
+Image -> (Detection) -> Crop -> Preprocessing -> OCR -> Postprocessing -> Result API
 
 ## API Endpoints
 - `POST /recognize`: Accepts an uploaded image and returns the evaluation results.
