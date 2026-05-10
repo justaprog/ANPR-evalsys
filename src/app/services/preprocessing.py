@@ -1,4 +1,5 @@
 import cv2
+from matplotlib.pyplot import gray
 
 
 def preprocess_plate_for_ocr(image):
@@ -9,17 +10,17 @@ def preprocess_plate_for_ocr(image):
     This step can be tweaked to find the right balance between improving OCR 
     accuracy and not over-processing the image.
     """
-    image = cv2.resize(
+    resized_image = cv2.resize(
         image,
-        None,
-        fx=2,
-        fy=2,
-        interpolation=cv2.INTER_CUBIC,
+        (400, 100)
     )
     # Convert to grayscale
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    gray = cv2.cvtColor(resized_image, cv2.COLOR_BGR2GRAY)
 
     # Mild contrast improvement
-    #gray = cv2.equalizeHist(gray)
+    gray = cv2.equalizeHist(gray)
 
-    return gray
+    # Mild noise reduction
+    blurred = cv2.GaussianBlur(gray, (5, 5), 0)
+
+    return blurred
