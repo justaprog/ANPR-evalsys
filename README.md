@@ -13,6 +13,10 @@ Image -> Detection -> Crop -> OCR -> Postprocessing -> Result API
 - Latency
 - Detection success rate
 
+## Dataset
+- Germany License Plate Dataset: Preview
+https://www.kaggle.com/datasets/unidpro/germany-license-plate-dataset?resource=download
+
 ## Stack 
 - Python
 - FastAPI
