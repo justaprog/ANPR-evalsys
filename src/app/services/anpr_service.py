@@ -1,5 +1,6 @@
 import time
-from app.services.image_utils import decode_image
+from app.utils.image_utils import decode_image
+from app.services.crop import crop_license_text_area
 from app.services.ocr import run_ocr
 from app.services.postprocess import (clean_plate_text, 
                                       build_german_plate_from_tokens, 
@@ -18,8 +19,9 @@ def recognize_plate_ocr_only(
     start_time = time.perf_counter()
 
     image = decode_image(image_bytes)
+    text_area = crop_license_text_area(image)
 
-    tokens, confidence = run_ocr(image)
+    tokens, confidence = run_ocr(text_area)
     raw_text = " ".join(tokens)
     
     # clean and correct the OCR output to build a plausible German plate text
