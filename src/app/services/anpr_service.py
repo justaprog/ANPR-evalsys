@@ -7,6 +7,7 @@ def recognize_plate_dummy(filename: str, content_type: str) -> dict:
     image -> detection -> crop -> OCR -> postprocessing.
     """
     start_time = time.perf_counter()
+    # TODO: replace with actual image processing and OCR logic
 
     # Simulate result for now
     plate_text = "B AB 1234"
