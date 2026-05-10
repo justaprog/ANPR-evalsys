@@ -16,6 +16,7 @@ Example via OpenAPI docs:
 - Detection success rate
 
 Current evaluation results on the 10 test images:
+![alt text](data/readme_img/benchmark_df.png)
 ![alt text](data/readme_img/benchmark.png)
 
 ## Dataset
