@@ -2,7 +2,7 @@
 A prototype for evaluating license plate recognition engines.
 
 ## Architecture
-Image -> Detection -> Crop -> OCR -> Postprocessing -> Result API
+Image -> Detection -> Crop -> Preprocessing -> OCR -> Postprocessing -> Result API
 
 ## API Endpoints
 - `POST /recognize`: Accepts an uploaded image and returns the evaluation results.
