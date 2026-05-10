@@ -38,6 +38,12 @@ def is_valid_german_plate(text: str) -> bool:
     """
     Simple German-style plate validation.
 
+    Simplified German plate:
+        city code: 1-3 letters
+        serial:    1-2 letters
+        number:    1-4 digits
+        optional:  E or H suffix
+
     Examples:
     B AB 1234  -> BAB1234
     M XY 987   -> MXY987
@@ -50,7 +56,8 @@ def is_valid_german_plate(text: str) -> bool:
     # - 1 to 3 uppercase letters (including ÄÖÜ) at the start
     # - followed by 1 to 2 uppercase letters
     # - followed by 1 to 4 digits
-    pattern = r"^[A-ZÄÖÜ]{1,3}[A-Z]{1,2}[0-9]{1,4}$"
+    # - optionally ending with 'E' or 'H' for electric or historic plates
+    pattern = r"^[A-ZÄÖÜ]{1,3}[A-ZÄÖÜ]{1,2}[0-9]{1,4}[EH]?$"
 
     return bool(re.match(pattern, text))
 
