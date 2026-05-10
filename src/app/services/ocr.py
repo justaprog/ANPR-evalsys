@@ -13,14 +13,13 @@ def run_ocr(image) -> tuple[list[str], float]:
     Returns recognized text and average confidence.
     """
     # Preprocess the image to improve OCR accuracy.
-    # NOTE: This step is super important for performance. 
-    # improve confidence from 0.2589 to 0.8662 on plate_02.png for example.
+    # NOTE: This step is super important for performance, improve results significantly.
     # But be careful with over-processing - too much sharpening or noise reduction 
     # can also hurt results. e.g: 2 stickers -> 8 and D, which is not a part of the license plate text.
     # NOTE: OCR can read non-license characters like stickers, which can be a problem for postprocessing.
     processed_image = preprocess_plate_for_ocr(image)
     # Use easyocr to read text from the image, restricting to allowed characters.
-    
+
     results = reader.readtext(
         processed_image,
         detail=1,
