@@ -7,11 +7,16 @@ Image -> Detection -> Crop -> Preprocessing -> OCR -> Postprocessing -> Result A
 ## API Endpoints
 - `POST /recognize`: Accepts an uploaded image and returns the evaluation results.
 
+Example via OpenAPI docs:
+![alt text](data/readme_img/api_ex.png)
 ## Metrics
 - Exact plate accuracy
 - Character accuracy
 - Latency
 - Detection success rate
+
+Current evaluation results on the 10 test images:
+![alt text](data/readme_img/benchmark.png)
 
 ## Dataset
 - Germany License Plate Dataset: Preview
