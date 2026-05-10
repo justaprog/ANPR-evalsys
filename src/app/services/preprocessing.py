@@ -5,6 +5,9 @@ def preprocess_plate_for_ocr(image):
     """
     Mild preprocessing only.
     Avoid strong thresholding because it can make stickers look like digits.
+
+    This step can be tweaked to find the right balance between improving OCR 
+    accuracy and not over-processing the image.
     """
     image = cv2.resize(
         image,
