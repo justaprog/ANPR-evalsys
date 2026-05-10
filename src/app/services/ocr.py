@@ -4,7 +4,7 @@ reader = easyocr.Reader(["en"], gpu=False)
 
 ALLOWED_PLATE_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789ÄÖÜ- "
 
-def run_ocr(image) -> tuple[str, float]:
+def run_ocr(image) -> tuple[list[str], float]:
     """
     Runs OCR on a cropped license plate image.
     Returns recognized text and average confidence.
@@ -16,17 +16,41 @@ def run_ocr(image) -> tuple[str, float]:
         allowlist=ALLOWED_PLATE_CHARS,
     )
 
-    if not results:
-        return "", 0.0
+    # For debugging: print OCR results
+    # TODO: remove or comment out in production
+    for bbox, text, confidence in results:
+        print("TEXT:", text)
+        print("CONF:", confidence)
+        print("BBOX:", bbox)
+        print()
 
-    texts = []
+    if not results:
+        return [], 0.0
+    # Sort results left-to-right based on bounding box x-coordinates to maintain correct text order.
+    results = sort_results_left_to_right(results)
+
+    tokens = []
     confidences = []
 
-    for _, text, confidence in results:
-        texts.append(text)
+    for bbox, text, confidence in results:
+        tokens.append(text)
         confidences.append(confidence)
         
-    combined_text = " ".join(texts)
+    combined_text = " ".join(tokens)
     avg_confidence = sum(confidences) / len(confidences)
 
-    return combined_text, avg_confidence
+    return tokens, avg_confidence
+
+def get_x_center(bbox: list[tuple[float, float]]) -> float:
+    """
+    Example BBOX format from easyocr:
+    BBOX: [[np.int32(114), np.int32(38)], 
+            [np.int32(188), np.int32(38)], 
+            [np.int32(188), np.int32(112)], 
+            [np.int32(114), np.int32(112)]]
+    """
+    xs = [float(point[0]) for point in bbox]
+    return sum(xs) / len(xs)
+
+def sort_results_left_to_right(results):
+    return sorted(results, key=lambda item: get_x_center(item[0]))
