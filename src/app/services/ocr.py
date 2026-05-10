@@ -1,4 +1,5 @@
 import easyocr
+import numpy as np
 
 from app.services.preprocessing import preprocess_plate_for_ocr
 
@@ -19,11 +20,21 @@ def run_ocr(image) -> tuple[list[str], float]:
     # NOTE: OCR can read non-license characters like stickers, which can be a problem for postprocessing.
     processed_image = preprocess_plate_for_ocr(image)
     # Use easyocr to read text from the image, restricting to allowed characters.
+    # param_sets to avoid merging separate characters into one box, which can cause incorrect OCR results.
+    param_sets = [
+        {"width_ths": 0.50, "ycenter_ths": 0.5, "height_ths": 0.5, "add_margin": 0.1},
+        {"width_ths": 0.20, "ycenter_ths": 0.4, "height_ths": 0.4, "add_margin": 0.05},
+        {"width_ths": 0.10, "ycenter_ths": 0.3, "height_ths": 0.3, "add_margin": 0.0},
+        {"width_ths": 0.05, "ycenter_ths": 0.3, "height_ths": 0.3, "add_margin": 0.0},
+        {"width_ths": 0.01, "ycenter_ths": 0.2, "height_ths": 0.2, "add_margin": 0.0},
+    ]
 
     results = reader.readtext(
         processed_image,
         detail=1,
         allowlist=ALLOWED_PLATE_CHARS,
+        # use the first param set
+        **param_sets[4]
     )
 
     # For debugging: print OCR results
@@ -37,21 +48,23 @@ def run_ocr(image) -> tuple[list[str], float]:
     if not results:
         return [], 0.0
     # Sort results left-to-right based on bounding box x-coordinates to maintain correct text order.
-    results = sort_results_left_to_right(results)
-
+    sorted_results = sort_results_left_to_right(results)
+    
     tokens = []
     confidences = []
 
-    for bbox, text, confidence in results:
+    for bbox, text, confidence in sorted_results:
         tokens.append(text)
         confidences.append(confidence)
         
-    combined_text = " ".join(tokens)
     avg_confidence = sum(confidences) / len(confidences)
 
     return tokens, avg_confidence
 
-def get_x_center(bbox: list[tuple[float, float]]) -> float:
+def sort_results_left_to_right(results):
+    return sorted(results, key=lambda item: bbox_center(item[0])[0])
+
+def bbox_center(bbox):
     """
     Example BBOX format from easyocr:
     BBOX: [[np.int32(114), np.int32(38)], 
@@ -60,7 +73,14 @@ def get_x_center(bbox: list[tuple[float, float]]) -> float:
             [np.int32(114), np.int32(112)]]
     """
     xs = [float(point[0]) for point in bbox]
-    return sum(xs) / len(xs)
+    ys = [float(point[1]) for point in bbox]
 
-def sort_results_left_to_right(results):
-    return sorted(results, key=lambda item: get_x_center(item[0]))
+    x_center = sum(xs) / len(xs)
+    y_center = sum(ys) / len(ys)
+
+    return x_center, y_center
+
+
+def bbox_height(bbox):
+    ys = [float(point[1]) for point in bbox]
+    return max(ys) - min(ys)
